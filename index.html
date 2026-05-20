@@ -1858,8 +1858,13 @@
     const gallery = document.getElementById('plbGallery');
     gallery.innerHTML = '';
 
+<<<<<<< HEAD
     (leave it completely empty, don't type anything)
     p.images.forEach((img, i) => {
+=======
+    let html = '';
+    // p.images.forEach((img, i) => {
+>>>>>>> 3e9beb139239a42d1df916fe61e608190e7deaf0
       html += '<div class="proj-gallery-img">';
       html += '<img src="' + img.src + '" alt="' + (img.caption || '') + '" style="width:100%;min-height:300px;height:auto;display:block;object-fit:contain;background:#111;">';
       if (img.caption) html += '<div class="proj-img-caption">' + img.caption + '</div>';
