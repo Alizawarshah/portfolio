@@ -1859,7 +1859,7 @@
     gallery.innerHTML = '';
 
     let html = '';
-    p.images.forEach((img, i) => {
+    // p.images.forEach((img, i) => {
       html += '<div class="proj-gallery-img">';
       html += '<img src="' + img.src + '" alt="' + (img.caption || '') + '" style="width:100%;min-height:300px;height:auto;display:block;object-fit:contain;background:#111;">';
       if (img.caption) html += '<div class="proj-img-caption">' + img.caption + '</div>';
