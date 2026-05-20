@@ -1230,113 +1230,6 @@
     .orb, .testi-track, .scroll-line { animation: none; }
     .reveal { transition: none; opacity: 1; transform: none; }
   }
-
-  /* ══════════════════════════════════════
-     BEHANCE INLINE PROJECT VIEW
-     Injected below the clicked card
-  ══════════════════════════════════════ */
-
-  /* The expanding row that sits below a card row */
-  .behance-project-view {
-    grid-column: 1 / -1; /* span all grid columns */
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    background: #080808;
-    border: 1px solid rgba(255,255,255,0.07);
-    border-radius: 6px;
-    overflow: hidden;
-    /* Animate open */
-    animation: bpvOpen 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-  }
-  @keyframes bpvOpen {
-    from { opacity: 0; transform: translateY(-12px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-
-  /* Header bar inside the inline view */
-  .bpv-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    padding: 2rem 2.5rem 1.5rem;
-    border-bottom: 1px solid var(--border);
-    background: #0a0a0a;
-    gap: 1.5rem;
-  }
-  .bpv-header-text {}
-  .bpv-cat {
-    font-size: 0.65rem;
-    font-weight: 600;
-    letter-spacing: 0.25em;
-    text-transform: uppercase;
-    color: var(--gold);
-    display: block;
-    margin-bottom: 0.35rem;
-  }
-  .bpv-title {
-    font-family: 'Montserrat', sans-serif;
-    font-size: clamp(1.2rem, 2.5vw, 1.8rem);
-    font-weight: 800;
-    color: var(--text);
-    margin-bottom: 0.4rem;
-  }
-  .bpv-desc {
-    font-size: 0.82rem;
-    color: var(--muted);
-    line-height: 1.6;
-    max-width: 560px;
-  }
-  .bpv-close {
-    flex-shrink: 0;
-    width: 40px; height: 40px;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 50%;
-    color: var(--text);
-    font-size: 1rem;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: border-color 0.3s, color 0.3s, transform 0.3s;
-  }
-  .bpv-close:hover { border-color: var(--gold); color: var(--gold); transform: rotate(90deg); }
-
-  /* Vertical image stack — the Behance layout */
-  .bpv-image-stack {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    padding: 2rem 2.5rem 2.5rem;
-    width: 100%;
-  }
-  .bpv-image-stack img {
-    width: 100%;
-    height: auto;
-    display: block;
-    border-radius: 4px;
-    background: var(--surface2);
-  }
-  .bpv-img-caption {
-    font-size: 0.7rem;
-    color: var(--muted);
-    letter-spacing: 0.06em;
-    margin-top: -14px; /* pull up just below image */
-    padding: 0.5rem 0.25rem;
-    border-bottom: 1px solid var(--border);
-  }
-
-  /* Active card gets a gold bottom border to indicate it's open */
-  .portfolio-card.bpv-active,
-  .video-card.bpv-active {
-    box-shadow: 0 0 0 2px var(--gold), 0 20px 60px rgba(0,0,0,0.5);
-  }
-
-  @media (max-width: 768px) {
-    .bpv-header { padding: 1.5rem; }
-    .bpv-image-stack { padding: 1rem 1.5rem 2rem; gap: 16px; }
-  }
 </style>
 </head>
 <body>
@@ -1410,8 +1303,8 @@
   <div class="grid-masonry" id="designGrid">
 
     <!-- CARD 1 — Prolavish Brand Identity -->
-    <div class="portfolio-card reveal reveal-delay-1" data-category="Branding" data-project="brand-identity">
-      <img src="BrandIdentity/1.jpg" class="card-img" id="card-thumb-0" alt="Prolavish Brand Identity" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+    <div class="portfolio-card reveal reveal-delay-1" data-category="Branding" onclick="openProjectLightbox(0)">
+      <img src="https://alizawarshah.github.io/portfolio/BrandIdentity/1.jpg" class="card-img" id="card-thumb-0" alt="Prolavish Brand Identity" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
       <div class="card-thumb t1" style="display:none;">🎨</div>
       <div class="card-img-count" id="card-count-0">31 images</div>
       <div class="card-overlay">
@@ -1425,6 +1318,36 @@
   </div>
 </section>
 
+<!-- ═══ BEHANCE-STYLE FULL PAGE PROJECT VIEWER ═══ -->
+<div id="behanceViewer" style="display:none; position:fixed; inset:0; z-index:500; background:var(--black); overflow-y:auto;">
+
+  <!-- Top Bar -->
+  <div style="position:sticky;top:0;z-index:10;background:rgba(5,5,5,0.95);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:1rem 2rem;display:flex;justify-content:space-between;align-items:center;">
+    <div style="display:flex;align-items:center;gap:1rem;">
+      <span id="bvCat" style="font-size:0.65rem;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);background:rgba(201,168,76,0.1);padding:0.3rem 0.8rem;border-radius:20px;border:1px solid rgba(201,168,76,0.2);"></span>
+      <span id="bvCounter" style="font-size:0.75rem;color:var(--muted);"></span>
+    </div>
+    <button onclick="closeBehanceViewer()" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:var(--text);width:40px;height:40px;border-radius:50%;font-size:1rem;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;" onmouseover="this.style.background='rgba(201,168,76,0.15)';this.style.borderColor='var(--gold)';this.style.color='var(--gold)'" onmouseout="this.style.background='rgba(255,255,255,0.06)';this.style.borderColor='rgba(255,255,255,0.1)';this.style.color='var(--text)'">✕</button>
+  </div>
+
+  <!-- Project Title Block — centered like Behance -->
+  <div style="text-align:center;padding:5rem 2rem 3rem;border-bottom:1px solid var(--border);">
+    <h1 id="bvTitle" style="font-family:'Bebas Neue',sans-serif;font-size:clamp(3rem,8vw,7rem);letter-spacing:0.05em;background:linear-gradient(135deg,var(--gold-light),var(--gold),var(--purple-light));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:1.2rem;line-height:1;"></h1>
+    <p id="bvDesc" style="font-size:1rem;color:var(--muted);max-width:600px;margin:0 auto 1rem;line-height:1.7;"></p>
+    <span id="bvCount" style="font-size:0.7rem;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);"></span>
+  </div>
+
+  <!-- Vertical Image Stack — full width like Behance -->
+  <div id="bvGallery" style="display:flex;flex-direction:column;gap:0;max-width:1000px;margin:0 auto;padding:3rem 2rem;gap:20px;"></div>
+
+  <!-- Bottom Nav -->
+  <div style="max-width:1000px;margin:0 auto;padding:2rem;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);">
+    <button onclick="navigateBehance(-1)" style="background:none;border:1px solid var(--border);color:var(--text);padding:0.7rem 1.8rem;border-radius:4px;cursor:pointer;font-family:'Montserrat',sans-serif;font-size:0.8rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;transition:all 0.2s;" onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text)'">← Previous</button>
+    <button onclick="navigateBehance(1)" style="background:none;border:1px solid var(--border);color:var(--text);padding:0.7rem 1.8rem;border-radius:4px;cursor:pointer;font-family:'Montserrat',sans-serif;font-size:0.8rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;transition:all 0.2s;" onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text)'">Next →</button>
+  </div>
+
+</div>
+
 <!-- PORTFOLIO 2: VIDEO -->
 <section id="video-editing">
   <div style="margin-bottom:3rem;">
@@ -1433,10 +1356,10 @@
   </div>
 
   <div class="video-grid">
-    <div class="video-card reveal reveal-delay-1" data-project="video-editing">
+    <div class="video-card reveal reveal-delay-1" onclick="openLightbox('https://alizawarshah.github.io/portfolio/Videos/video_editing.mp4', 'Video Editing', 'Intro')">
       <div class="video-thumb v1">
     <video width="100%" height="100%" style="object-fit: cover;" muted loop autoplay>
-        <source src="Videos/video_editing.mp4" type="video/mp4">
+        <source src="https://alizawarshah.github.io/portfolio/Videos/video_editing.mp4" type="video/mp4">
     </video>
 </div>
       <div class="video-info">
@@ -1735,6 +1658,18 @@
   <p class="footer-copy">© 2026 Ali Zawar Shah. All rights reserved.</p>
 </footer>
 
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox(event)">
+  <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+  <div class="lightbox-inner" onclick="event.stopPropagation()">
+    <div class="lightbox-video" id="lbThumb">🎬</div>
+    <div class="lightbox-info">
+      <span class="video-cat" id="lbCat"></span>
+      <p class="video-title" id="lbTitle" style="font-family:'Montserrat',sans-serif;font-size:1.1rem;font-weight:700;margin:0.3rem 0 0.5rem;"></p>
+      <p style="font-size:0.85rem;color:var(--muted);">Preview not available — this is a portfolio placeholder. Link your actual video file or YouTube embed here.</p>
+    </div>
+  </div>
+</div>
 
 <script>
   // ── CURSOR (pointer devices only) ──
@@ -1818,171 +1753,145 @@
   });
 
   // ══════════════════════════════════════════
-  // BEHANCE-STYLE INLINE PROJECT VIEWER
-  // Click a card → images stack vertically below it, inside the grid
+  // BEHANCE-STYLE PROJECT LIGHTBOX
   // ══════════════════════════════════════════
 
   // ── PROJECT DATA ──
-  // Local paths match your folder structure on disk.
-  // BrandIdentity/ has 31 images (1.jpg – 31.jpg)
-  // Add more projects here in the same format.
+  // Add your own images and descriptions here!
+  // For each project, add as many images as you want in the "images" array.
+  // Image paths should match your images folder e.g. "images/nebula_1.jpg"
 
-  const projectData = {
-    'brand-identity': {
-      title: 'Prolavish Brand Identity',
-      category: 'Branding',
-      description: 'A complete brand identity system for Prolavish — featuring logo design, mockups, stationery, packaging, badges, and full brand guidelines across 31 presentation slides.',
+  const projects = [
+    {
+      title: "Prolavish Brand Identity",
+      category: "Branding",
+      description: "A complete brand identity system for Prolavish — featuring logo design, mockups, stationery, packaging, badges, and full brand guidelines across 31 presentation slides.",
+      thumbnail: "https://alizawarshah.github.io/portfolio/BrandIdentity/1.jpg", // ← Change this to any image you want as the cover card thumbnail
       images: [
-        { src: 'BrandIdentity/1.jpg',  caption: 'Logo on Business Card' },
-        { src: 'BrandIdentity/2.jpg',  caption: 'Brand Presentation Cover' },
-        { src: 'BrandIdentity/3.jpg',  caption: 'Logo on Black Flag' },
-        { src: 'BrandIdentity/4.jpg',  caption: 'Interior Wall Signage' },
-        { src: 'BrandIdentity/5.jpg',  caption: 'Product Box Packaging' },
-        { src: 'BrandIdentity/6.jpg',  caption: 'Cap Mockup Dark' },
-        { src: 'BrandIdentity/7.jpg',  caption: 'Round Badge Mockup' },
-        { src: 'BrandIdentity/8.jpg',  caption: 'Pin Badges Mockup' },
-        { src: 'BrandIdentity/9.jpg',  caption: 'Branded Pen Mockup' },
-        { src: 'BrandIdentity/10.jpg', caption: 'Brand Identity Sheet' },
-        { src: 'BrandIdentity/11.jpg', caption: 'Construction Logo Version' },
-        { src: 'BrandIdentity/12.jpg', caption: 'Logo Dark Background' },
-        { src: 'BrandIdentity/13.jpg', caption: 'Sketching & Design Process' },
-        { src: 'BrandIdentity/14.jpg', caption: 'Badge Set Mockup' },
-        { src: 'BrandIdentity/15.jpg', caption: '3D Logo Render' },
-        { src: 'BrandIdentity/16.jpg', caption: 'Bottle Mockup' },
-        { src: 'BrandIdentity/17.jpg', caption: 'Blue Box Packaging' },
-        { src: 'BrandIdentity/18.jpg', caption: 'Glass Mockup' },
-        { src: 'BrandIdentity/19.jpg', caption: 'Smart Watch Mockup' },
-        { src: 'BrandIdentity/20.jpg', caption: 'Logo Variations' },
-        { src: 'BrandIdentity/21.jpg', caption: 'Pattern Design' },
-        { src: 'BrandIdentity/22.jpg', caption: 'Brand Color Palette' },
-        { src: 'BrandIdentity/23.jpg', caption: 'Wordmark Typography' },
-        { src: 'BrandIdentity/24.jpg', caption: 'Cap Mockup Black' },
-        { src: 'BrandIdentity/25.jpg', caption: 'Cap Mockup White' },
-        { src: 'BrandIdentity/26.jpg', caption: 'Phone Case Mockup' },
-        { src: 'BrandIdentity/27.jpg', caption: '3D Icon Render' },
-        { src: 'BrandIdentity/28.jpg', caption: 'Smart Band Mockup' },
-        { src: 'BrandIdentity/29.jpg', caption: 'Logo on Dark Background' },
-        { src: 'BrandIdentity/30.jpg', caption: 'Wordmark Final Version' },
-        { src: 'BrandIdentity/31.jpg', caption: 'Design Process Sketching' },
+        { src: "https://alizawarshah.github.io/portfolio/BrandIdentity/1.jpg", caption: "Logo on Business Card" },
+        { src: "https://alizawarshah.github.io/portfolio/BrandIdentity/2.jpg", caption: "Brand Presentation Cover" },
+        { src: "https://alizawarshah.github.io/portfolio/BrandIdentity/3.jpg", caption: "Logo on Black Flag" },
+        { src: "https://alizawarshah.github.io/portfolio/BrandIdentity/4.jpg", caption: "Interior Wall Signage" },
+        { src: "https://alizawarshah.github.io/portfolio/BrandIdentity/5.jpg", caption: "Product Box Packaging" },
+        { src: "https://alizawarshah.github.io/portfolio/BrandIdentity/6.jpg", caption: "Cap Mockup Dark" },
+        { src: "https://alizawarshah.github.io/portfolio/BrandIdentity/7.jpg", caption: "Round Badge Mockup" },
+        { src: "https://alizawarshah.github.io/portfolio/BrandIdentity/8.jpg", caption: "Pin Badges Mockup" },
+        { src: "https://alizawarshah.github.io/portfolio/BrandIdentity/9.jpg", caption: "Branded Pen Mockup" },
+        { src: "https://alizawarshah.github.io/portfolio/BrandIdentity/10.jpg", caption: "Brand Identity Sheet" },
+        { src: "https://alizawarshah.github.io/portfolio/BrandIdentity/11.jpg", caption: "Construction Logo Version" },
+        { src: "https://alizawarshah.github.io/portfolio/BrandIdentity/12.jpg", caption: "Logo Dark Background" },
+        { src: "https://alizawarshah.github.io/portfolio/BrandIdentity/13.jpg", caption: "Sketching & Design Process" },
+        { src: "https://alizawarshah.github.io/portfolio/BrandIdentity/14.jpg", caption: "Badge Set Mockup" },
+        { src: "https://alizawarshah.github.io/portfolio/BrandIdentity/15.jpg", caption: "3D Logo Render" },
+        { src: "https://alizawarshah.github.io/portfolio/BrandIdentity/16.jpg", caption: "Bottle Mockup" },
+        { src: "https://alizawarshah.github.io/portfolio/BrandIdentity/17.jpg", caption: "Blue Box Packaging" },
+        { src: "https://alizawarshah.github.io/portfolio/BrandIdentity/18.jpg", caption: "Glass Mockup" },
+        { src: "https://alizawarshah.github.io/portfolio/BrandIdentity/19.jpg", caption: "Smart Watch Mockup" },
+        { src: "https://alizawarshah.github.io/portfolio/BrandIdentity/20.jpg", caption: "Logo Variations" },
+        { src: "https://alizawarshah.github.io/portfolio/BrandIdentity/21.jpg", caption: "Pattern Design" },
+        { src: "https://alizawarshah.github.io/portfolio/BrandIdentity/22.jpg", caption: "Brand Color Palette" },
+        { src: "https://alizawarshah.github.io/portfolio/BrandIdentity/23.jpg", caption: "Wordmark Typography" },
+        { src: "https://alizawarshah.github.io/portfolio/BrandIdentity/24.jpg", caption: "Cap Mockup Black" },
+        { src: "https://alizawarshah.github.io/portfolio/BrandIdentity/25.jpg", caption: "Cap Mockup White" },
+        { src: "https://alizawarshah.github.io/portfolio/BrandIdentity/26.jpg", caption: "Phone Case Mockup" },
+        { src: "https://alizawarshah.github.io/portfolio/BrandIdentity/27.jpg", caption: "3D Icon Render" },
+        { src: "https://alizawarshah.github.io/portfolio/BrandIdentity/28.jpg", caption: "Smart Band Mockup" },
+        { src: "https://alizawarshah.github.io/portfolio/BrandIdentity/29.jpg", caption: "Logo on Dark Background" },
+        { src: "https://alizawarshah.github.io/portfolio/BrandIdentity/30.jpg", caption: "Wordmark Final Version" },
+        { src: "https://alizawarshah.github.io/portfolio/BrandIdentity/31.jpg", caption: "Design Process Sketching" },
       ]
     },
+  ];
 
-    // ── VIDEO EDITING PROJECT ──
-    // Add image stills from your video projects here.
-    // These load from your Images/ folder (or wherever you keep video thumbnails).
-    'video-editing': {
-      title: 'Video Editing & Motion',
-      category: 'Video Editing',
-      description: 'A showcase of cinematic video edits, motion graphics, and animation work — from brand intro sequences to social media reels.',
-      images: [
-        // ↓ Replace / add paths to your actual video still images
-        { src: 'Images/video_still_1.jpg', caption: 'Brand Intro Sequence' },
-        { src: 'Images/video_still_2.jpg', caption: 'Motion Graphics Reel' },
-        { src: 'Images/video_still_3.jpg', caption: 'Social Media Edit' },
-        // Add more stills here as needed
-      ]
-    },
-  };
+  // ── BEHANCE-STYLE INLINE VIEWER ──
+  let currentProjectIndex = 0;
 
-  // ── CORE: open inline Behance view ──
-  // Finds the clicked card's position in its grid, removes any existing
-  // open viewer, then injects a new .behance-project-view after that row.
+  function openProjectLightbox(index) {
+    currentProjectIndex = index;
+    renderBehanceProject();
+    const viewer = document.getElementById('behanceViewer');
+    viewer.style.display = 'block';
+    viewer.scrollTop = 0;
+    document.body.style.overflow = 'hidden';
+  }
 
-  let activeCard = null; // track which card is open
+  function closeBehanceViewer() {
+    document.getElementById('behanceViewer').style.display = 'none';
+    document.body.style.overflow = '';
+  }
 
-  function openBehanceView(card) {
-    const projectKey = card.dataset.project;
-    const data = projectData[projectKey];
-    if (!data) return;
+  function navigateBehance(direction) {
+    currentProjectIndex += direction;
+    if (currentProjectIndex < 0) currentProjectIndex = projects.length - 1;
+    if (currentProjectIndex >= projects.length) currentProjectIndex = 0;
+    renderBehanceProject();
+    document.getElementById('behanceViewer').scrollTop = 0;
+  }
 
-    // If this card is already open, close it
-    if (activeCard === card) {
-      closeBehanceView();
-      return;
-    }
+  function renderBehanceProject() {
+    const p = projects[currentProjectIndex];
+    document.getElementById('bvCat').textContent = p.category;
+    document.getElementById('bvTitle').textContent = p.title;
+    document.getElementById('bvDesc').textContent = p.description;
+    document.getElementById('bvCount').textContent = p.images.length + ' images in this project';
+    document.getElementById('bvCounter').textContent = (currentProjectIndex + 1) + ' / ' + projects.length;
 
-    // Close any existing open view first
-    closeBehanceView(false);
+    // Build vertical image stack
+    const gallery = document.getElementById('bvGallery');
+    gallery.innerHTML = '';
 
-    // Mark card as active
-    card.classList.add('bpv-active');
-    activeCard = card;
+    p.images.forEach((img) => {
+      const wrapper = document.createElement('div');
+      wrapper.style.cssText = 'width:100%;background:#0d0d0d;border-radius:4px;overflow:hidden;';
 
-    // Build the inline viewer element
-    const viewer = document.createElement('div');
-    viewer.className = 'behance-project-view';
-    viewer.id = 'bpv-open';
+      const imgEl = document.createElement('img');
+      imgEl.src = img.src;
+      imgEl.alt = img.caption || '';
+      imgEl.style.cssText = 'width:100%;height:auto;display:block;';
+      imgEl.loading = 'lazy';
+      wrapper.appendChild(imgEl);
 
-    // Header
-    const header = document.createElement('div');
-    header.className = 'bpv-header';
-    header.innerHTML = `
-      <div class="bpv-header-text">
-        <span class="bpv-cat">${data.category}</span>
-        <h3 class="bpv-title">${data.title}</h3>
-        <p class="bpv-desc">${data.description}</p>
-      </div>
-      <button class="bpv-close" onclick="closeBehanceView()" title="Close project">✕</button>
-    `;
-
-    // Image stack
-    const stack = document.createElement('div');
-    stack.className = 'bpv-image-stack';
-
-    data.images.forEach(imgData => {
-      const img = document.createElement('img');
-      img.src = imgData.src;
-      img.alt = imgData.caption || data.title;
-      // graceful: hide broken images
-      img.onerror = function() { this.style.display = 'none'; };
-      stack.appendChild(img);
-
-      if (imgData.caption) {
+      if (img.caption) {
         const cap = document.createElement('p');
-        cap.className = 'bpv-img-caption';
-        cap.textContent = imgData.caption;
-        stack.appendChild(cap);
+        cap.textContent = img.caption;
+        cap.style.cssText = 'font-size:0.78rem;color:var(--muted);padding:0.6rem 1rem;letter-spacing:0.05em;';
+        wrapper.appendChild(cap);
       }
+      gallery.appendChild(wrapper);
     });
-
-    viewer.appendChild(header);
-    viewer.appendChild(stack);
-
-    // Insert the viewer into the grid.
-    // It uses grid-column: 1 / -1 so it spans full width.
-    // We insert it after the card inside the same grid container.
-    const grid = card.parentElement;
-    card.insertAdjacentElement('afterend', viewer);
-
-    // Smooth scroll so the viewer header is visible
-    setTimeout(() => {
-      viewer.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 60);
   }
 
-  function closeBehanceView(doScroll = true) {
-    const existing = document.getElementById('bpv-open');
-    if (existing) {
-      if (doScroll && activeCard) {
-        activeCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-      }
-      existing.remove();
-    }
-    if (activeCard) {
-      activeCard.classList.remove('bpv-active');
-      activeCard = null;
-    }
-  }
-
-  // ── Attach click listeners to all cards with data-project ──
-  document.querySelectorAll('[data-project]').forEach(card => {
-    card.addEventListener('click', () => openBehanceView(card));
-  });
+  // ── INIT cards ──
+  (function initCards() {
+    projects.forEach((p, i) => {
+      const cardThumb = document.getElementById('card-thumb-' + i);
+      if (cardThumb && p.thumbnail) cardThumb.src = p.thumbnail;
+      const countBadge = document.getElementById('card-count-' + i);
+      if (countBadge) countBadge.textContent = p.images.length + ' images';
+    });
+  })();
 
   // Close on Escape
   document.addEventListener('keydown', e => {
-    if (e.key === 'Escape') closeBehanceView();
+    if (e.key === 'Escape') closeBehanceViewer();
   });
+
+  // ── VIDEO LIGHTBOX ──
+  function openLightbox(src, title, cat) {
+    const thumb = document.getElementById('lbThumb');
+    thumb.innerHTML = '<video controls autoplay style="width:100%;height:100%;display:block;background:#000;border-radius:6px;"><source src="' + src + '" type="video/mp4">Your browser does not support video.</video>';
+    document.getElementById('lbTitle').textContent = title;
+    document.getElementById('lbCat').textContent = cat;
+    document.getElementById('lightbox').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeLightbox(e) {
+    if(!e || e.target === document.getElementById('lightbox') || e.target.classList.contains('lightbox-close')) {
+      document.getElementById('lightbox').classList.remove('open');
+      document.getElementById('lbThumb').innerHTML = '';
+      document.body.style.overflow = '';
+    }
+  }
 
   // ── FORM SUBMIT ──
   function handleSubmit(e){
