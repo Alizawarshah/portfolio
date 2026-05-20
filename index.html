@@ -967,7 +967,7 @@
     flex-direction: column;
     transform: translateY(100%);
     transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
-    overflow: hidden;
+    overflow: visible;
   }
   .proj-lightbox.open .proj-lb-panel {
     transform: translateY(0);
@@ -1025,7 +1025,8 @@
   /* Scrollable image gallery */
   .proj-lb-gallery {
     flex: 1;
-    overflow-y: auto;
+    overflow-y: scroll;
+    -webkit-overflow-scrolling: touch;
     padding: 2.5rem 3rem;
     display: flex;
     flex-direction: column;
