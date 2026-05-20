@@ -1332,9 +1332,9 @@
 
   <!-- Project Title Block — centered like Behance -->
   <div style="text-align:center;padding:5rem 2rem 3rem;border-bottom:1px solid var(--border);">
-    <h1 id="bvTitle" style="font-family:'Bebas Neue',sans-serif;font-size:clamp(3rem,8vw,7rem);letter-spacing:0.05em;background:linear-gradient(135deg,var(--gold-light),var(--gold),var(--purple-light));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:1.2rem;line-height:1;"></h1>
+    <h1 id="bvTitle" style="font-family:'Montserrat',sans-serif;font-weight:800;font-size:clamp(2rem,6vw,5rem);letter-spacing:-0.02em;background:linear-gradient(135deg,var(--gold-light),var(--gold),var(--purple-light));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:1.2rem;line-height:1.1;"></h1>
     <p id="bvDesc" style="font-size:1rem;color:var(--muted);max-width:600px;margin:0 auto 1rem;line-height:1.7;"></p>
-    <span id="bvCount" style="font-size:0.7rem;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);"></span>
+    <span id="bvCount" style="display:none;"></span>
   </div>
 
   <!-- Vertical Image Stack — full width like Behance -->
@@ -1833,31 +1833,89 @@
     document.getElementById('bvCat').textContent = p.category;
     document.getElementById('bvTitle').textContent = p.title;
     document.getElementById('bvDesc').textContent = p.description;
-    document.getElementById('bvCount').textContent = p.images.length + ' images in this project';
+    document.getElementById('bvCount').textContent = '';
     document.getElementById('bvCounter').textContent = (currentProjectIndex + 1) + ' / ' + projects.length;
 
-    // Build vertical image stack
     const gallery = document.getElementById('bvGallery');
     gallery.innerHTML = '';
 
     p.images.forEach((img) => {
       const wrapper = document.createElement('div');
-      wrapper.style.cssText = 'width:100%;background:#0d0d0d;border-radius:4px;overflow:hidden;';
+      wrapper.className = 'bv-img-wrapper';
+      wrapper.draggable = true;
+      wrapper.style.cssText = 'width:100%;background:#0d0d0d;border-radius:4px;overflow:hidden;cursor:grab;position:relative;user-select:none;';
 
+      // Drag handle hint
+      const handle = document.createElement('div');
+      handle.style.cssText = 'position:absolute;top:10px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.5);color:rgba(255,255,255,0.3);font-size:0.6rem;letter-spacing:0.15em;padding:3px 10px;border-radius:20px;opacity:0;transition:opacity 0.2s;pointer-events:none;font-family:Montserrat,sans-serif;';
+      handle.textContent = '⠿ DRAG TO REORDER';
+      wrapper.appendChild(handle);
+      wrapper.addEventListener('mouseenter', () => handle.style.opacity = '1');
+      wrapper.addEventListener('mouseleave', () => handle.style.opacity = '0');
+
+      // Image with zoom on scroll
       const imgEl = document.createElement('img');
       imgEl.src = img.src;
       imgEl.alt = img.caption || '';
-      imgEl.style.cssText = 'width:100%;height:auto;display:block;';
       imgEl.loading = 'lazy';
+      imgEl.style.cssText = 'width:100%;height:auto;display:block;transform-origin:center center;transition:transform 0.1s;cursor:zoom-in;';
+
+      let scale = 1;
+      let isDraggingZoom = false;
+      let startX, startY, translateX = 0, translateY = 0;
+
+      // Scroll to zoom
+      wrapper.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        scale += e.deltaY < 0 ? 0.1 : -0.1;
+        scale = Math.min(Math.max(scale, 1), 4);
+        imgEl.style.cursor = scale > 1 ? 'zoom-out' : 'zoom-in';
+        imgEl.style.transform = scale > 1 ? 'scale(' + scale + ') translate(' + translateX + 'px,' + translateY + 'px)' : 'scale(1)';
+        if (scale === 1) { translateX = 0; translateY = 0; }
+      }, { passive: false });
+
+      // Drag to pan when zoomed
+      imgEl.addEventListener('mousedown', (e) => {
+        if (scale > 1) { isDraggingZoom = true; startX = e.clientX - translateX; startY = e.clientY - translateY; imgEl.style.cursor = 'grabbing'; e.preventDefault(); }
+      });
+      document.addEventListener('mousemove', (e) => {
+        if (!isDraggingZoom) return;
+        translateX = e.clientX - startX; translateY = e.clientY - startY;
+        imgEl.style.transform = 'scale(' + scale + ') translate(' + translateX + 'px,' + translateY + 'px)';
+      });
+      document.addEventListener('mouseup', () => { if (isDraggingZoom) { isDraggingZoom = false; imgEl.style.cursor = scale > 1 ? 'zoom-out' : 'zoom-in'; } });
+
       wrapper.appendChild(imgEl);
 
-      if (img.caption) {
-        const cap = document.createElement('p');
-        cap.textContent = img.caption;
-        cap.style.cssText = 'font-size:0.78rem;color:var(--muted);padding:0.6rem 1rem;letter-spacing:0.05em;';
-        wrapper.appendChild(cap);
-      }
+      // Empty caption area — write here whenever you want
+      const cap = document.createElement('div');
+      cap.style.cssText = 'height:2.5rem;';
+      wrapper.appendChild(cap);
+
       gallery.appendChild(wrapper);
+    });
+
+    // Drag to reorder
+    initDragToReorder(gallery);
+  }
+
+  function initDragToReorder(gallery) {
+    let dragged = null;
+    gallery.addEventListener('dragstart', (e) => {
+      dragged = e.target.closest('.bv-img-wrapper');
+      if (dragged) { setTimeout(() => dragged.style.opacity = '0.4', 0); }
+    });
+    gallery.addEventListener('dragend', () => {
+      if (dragged) { dragged.style.opacity = '1'; dragged = null; }
+    });
+    gallery.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      const target = e.target.closest('.bv-img-wrapper');
+      if (target && target !== dragged) {
+        const rect = target.getBoundingClientRect();
+        const after = e.clientY > rect.top + rect.height / 2;
+        gallery.insertBefore(dragged, after ? target.nextSibling : target);
+      }
     });
   }
 
