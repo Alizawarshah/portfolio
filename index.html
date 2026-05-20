@@ -1859,38 +1859,14 @@
     const gallery = document.getElementById('plbGallery');
     gallery.innerHTML = '';
 
+    let html = '';
     p.images.forEach((img, i) => {
-      const wrap = document.createElement('div');
-      wrap.className = 'proj-gallery-img';
-
-      const imgEl = document.createElement('img');
-      imgEl.alt = img.caption || p.title + ' ' + (i+1);
-      
-
-      // Show placeholder if image fails to load
-      const placeholder = document.createElement('div');
-      placeholder.className = 'proj-img-placeholder';
-      placeholder.innerHTML = '<span>🖼</span>Replace with: ' + img.src;
-      placeholder.style.display = 'none';
-
-      imgEl.style.width = "100%";
-      imgEl.style.display = "block";
-      imgEl.onerror = function() {
-        this.style.display = 'none';
-        placeholder.style.display = 'flex';
-      };
-      imgEl.src = img.src;
-      imgEl.onload = function() { this.style.minHeight = "unset"; };
-
-      const caption = document.createElement('div');
-      caption.className = 'proj-img-caption';
-      caption.textContent = img.caption || '';
-
-      wrap.appendChild(imgEl);
-      wrap.appendChild(placeholder);
-      if (img.caption) wrap.appendChild(caption);
-      gallery.appendChild(wrap);
+      html += '<div class="proj-gallery-img">';
+      html += '<img src="' + img.src + '" alt="' + (img.caption || '') + '" style="width:100%;height:auto;display:block;">';
+      if (img.caption) html += '<div class="proj-img-caption">' + img.caption + '</div>';
+      html += '</div>';
     });
+    gallery.innerHTML = html;
   }
 
   // ── INIT: sync card thumbnails & counts from project data on load ──
