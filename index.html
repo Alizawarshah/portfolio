@@ -1048,6 +1048,8 @@
     border: 1px solid var(--border);
   }
   .proj-gallery-img img {
+    min-height: 200px;
+    background: var(--surface2);
     width: 100%;
     height: auto;
     display: block;
@@ -1877,6 +1879,7 @@
         placeholder.style.display = 'flex';
       };
       imgEl.src = img.src;
+      imgEl.onload = function() { this.style.minHeight = "unset"; };
 
       const caption = document.createElement('div');
       caption.className = 'proj-img-caption';
