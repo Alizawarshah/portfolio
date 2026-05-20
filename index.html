@@ -1332,9 +1332,15 @@
 
   <!-- Project Title Block — centered like Behance -->
   <div style="text-align:center;padding:5rem 2rem 3rem;border-bottom:1px solid var(--border);">
+<<<<<<< HEAD
     <h1 id="bvTitle" style="font-family:'Montserrat',sans-serif;font-weight:800;font-size:clamp(2rem,6vw,5rem);letter-spacing:-0.02em;background:linear-gradient(135deg,var(--gold-light),var(--gold),var(--purple-light));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:1.2rem;line-height:1.1;"></h1>
     <p id="bvDesc" style="font-size:1rem;color:var(--muted);max-width:600px;margin:0 auto 1rem;line-height:1.7;"></p>
     <span id="bvCount" style="display:none;"></span>
+=======
+    <h1 id="bvTitle" style="font-family:'Bebas Neue',sans-serif;font-size:clamp(3rem,8vw,7rem);letter-spacing:0.05em;background:linear-gradient(135deg,var(--gold-light),var(--gold),var(--purple-light));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:1.2rem;line-height:1;"></h1>
+    <p id="bvDesc" style="font-size:1rem;color:var(--muted);max-width:600px;margin:0 auto 1rem;line-height:1.7;"></p>
+    <span id="bvCount" style="font-size:0.7rem;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);"></span>
+>>>>>>> ac49186a67d3230dd87969cd3d68086ec15d05e6
   </div>
 
   <!-- Vertical Image Stack — full width like Behance -->
@@ -1833,14 +1839,22 @@
     document.getElementById('bvCat').textContent = p.category;
     document.getElementById('bvTitle').textContent = p.title;
     document.getElementById('bvDesc').textContent = p.description;
+<<<<<<< HEAD
     document.getElementById('bvCount').textContent = '';
     document.getElementById('bvCounter').textContent = (currentProjectIndex + 1) + ' / ' + projects.length;
 
+=======
+    document.getElementById('bvCount').textContent = p.images.length + ' images in this project';
+    document.getElementById('bvCounter').textContent = (currentProjectIndex + 1) + ' / ' + projects.length;
+
+    // Build vertical image stack
+>>>>>>> ac49186a67d3230dd87969cd3d68086ec15d05e6
     const gallery = document.getElementById('bvGallery');
     gallery.innerHTML = '';
 
     p.images.forEach((img) => {
       const wrapper = document.createElement('div');
+<<<<<<< HEAD
       wrapper.className = 'bv-img-wrapper';
       wrapper.draggable = true;
       wrapper.style.cssText = 'width:100%;background:#0d0d0d;border-radius:4px;overflow:hidden;cursor:grab;position:relative;user-select:none;';
@@ -1919,6 +1933,27 @@
     });
   }
 
+=======
+      wrapper.style.cssText = 'width:100%;background:#0d0d0d;border-radius:4px;overflow:hidden;';
+
+      const imgEl = document.createElement('img');
+      imgEl.src = img.src;
+      imgEl.alt = img.caption || '';
+      imgEl.style.cssText = 'width:100%;height:auto;display:block;';
+      imgEl.loading = 'lazy';
+      wrapper.appendChild(imgEl);
+
+      if (img.caption) {
+        const cap = document.createElement('p');
+        cap.textContent = img.caption;
+        cap.style.cssText = 'font-size:0.78rem;color:var(--muted);padding:0.6rem 1rem;letter-spacing:0.05em;';
+        wrapper.appendChild(cap);
+      }
+      gallery.appendChild(wrapper);
+    });
+  }
+
+>>>>>>> ac49186a67d3230dd87969cd3d68086ec15d05e6
   // ── INIT cards ──
   (function initCards() {
     projects.forEach((p, i) => {
