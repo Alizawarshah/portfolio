@@ -1702,7 +1702,7 @@
       mobileNav.classList.remove('open');
       hamburger.setAttribute('aria-expanded', 'false');
       mobileNav.setAttribute('aria-hidden', 'true');
-      document.body.style.overflow = '';
+      document.body.style.position = ""; document.body.style.width = "";
     });
   });
 
@@ -1818,12 +1818,12 @@
     }
     renderProject();
     document.getElementById('projLightbox').classList.add('open');
-    document.body.style.overflow = 'hidden';
+    document.body.style.position = "fixed"; document.body.style.width = "100%";
   }
 
   function closeProjectLightbox() {
     document.getElementById('projLightbox').classList.remove('open');
-    document.body.style.overflow = '';
+    document.body.style.position = ""; document.body.style.width = "";
   }
 
   function navigateProject(direction) {
@@ -1862,7 +1862,7 @@
     let html = '';
     p.images.forEach((img, i) => {
       html += '<div class="proj-gallery-img">';
-      html += '<img src="' + img.src + '" alt="' + (img.caption || '') + '" style="width:100%;height:auto;display:block;">';
+      html += '<img src="' + img.src + '" alt="' + (img.caption || '') + '" style="width:100%;min-height:300px;height:auto;display:block;object-fit:contain;background:#111;">';
       if (img.caption) html += '<div class="proj-img-caption">' + img.caption + '</div>';
       html += '</div>';
     });
