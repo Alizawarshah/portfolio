@@ -1870,6 +1870,8 @@
       placeholder.innerHTML = '<span>🖼</span>Replace with: ' + img.src;
       placeholder.style.display = 'none';
 
+      imgEl.style.width = "100%";
+      imgEl.style.display = "block";
       imgEl.onerror = function() {
         this.style.display = 'none';
         placeholder.style.display = 'flex';
